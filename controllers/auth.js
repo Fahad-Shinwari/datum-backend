@@ -96,6 +96,7 @@ const register = asyncWrapper(async (req, res) => {
 })
 
 const google = asyncWrapper(async (req, res) => {
+	console.log("first")
 	const { token }  = JSON.parse(req.body.body) 
     const ticket = await client.verifyIdToken({
         idToken: token,

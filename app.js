@@ -7,8 +7,11 @@ const auth = require('./routes/auth');
 const category = require('./routes/category');
 const blog = require('./routes/blog');
 const comment = require('./routes/comment');
+const navigation = require('./routes/navigation');
+const newCategory = require('./routes/newCategory');
 const like = require('./routes/like');
 const message = require('./routes/message');
+const upload = require('./controllers/fileUpload');
 const connectDB = require('./db/connect');
 require('dotenv').config();
 const notFound = require('./middleware/not-found');
@@ -30,6 +33,9 @@ app.use('/api/v1/blog', blog);
 app.use('/api/v1/comment', comment);
 app.use('/api/v1/like', like);
 app.use("/api/v1/messages", message);
+app.use("/api/v1/upload", upload);
+app.use("/api/v1/navigation", navigation);
+app.use("/api/v1/newcategory", newCategory);
 
 app.use(notFound);
 app.use(errorHandlerMiddleware);
@@ -56,10 +62,31 @@ const io = socket(server, {
 });
 
 global.onlineUsers = new Map();
+global.notifications = new Map();
 io.on("connection", (socket) => {
   global.chatSocket = socket;
   socket.on("add-user", (userId) => {
     onlineUsers.set(userId, socket.id);
+  });
+  socket.on("add-notifications", (userId) => {
+    console.log(userId)
+    notifications.set(userId, socket.id);
+    console.log(notifications)
+  });
+
+  // socket.broadcast.emit('post-liked', 'this is a message');
+
+  socket.on("liked-post", (blog) => {
+    const sendUserSocket = notifications.get(blog.admin);
+      if (sendUserSocket) {
+        socket.to(sendUserSocket).emit("post-liked",blog);
+      }
+  });
+  socket.on("disliked-post", (blog) => {
+    const sendUserSocket = notifications.get(blog.admin);
+      if (sendUserSocket) {
+        socket.to(sendUserSocket).emit("post-disliked",blog);
+      }
   });
 
   socket.on("send-msg", (data) => {

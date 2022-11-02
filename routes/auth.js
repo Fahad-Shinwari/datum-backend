@@ -16,8 +16,8 @@ router.route('/login').post(login)
 router.route('/change-password').post(changePassword)
 router.route('/register').post(register)
 router.route('/google').post(google)
-router.route('/:id').patch(updateUsersPermissions).get(getSingleUser)
+router.route('/:id').put(updateUsersPermissions).get(getSingleUser)
 router.route('/chat/:id').get(getAllUsers)
-router.route('/dlt/:id').patch(deleteUsersPermissions)
+router.route('/dlt/:id').put(deleteUsersPermissions)
 
 module.exports = router

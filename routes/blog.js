@@ -2,16 +2,14 @@ const express = require('express')
 const router = express.Router()
 
 const {
-  createBlog,
   getAllBlogs,
-  uploadImage,
   getBlog,
-  updateBlog
+  updateBlog,
+  getMostLikedBlogs
 } = require('../controllers/blog')
 
 router.route('/').get(getAllBlogs)
-router.route('/create').post(createBlog)
-router.route('/upload').post(uploadImage)
-router.route('/:id').get(getBlog).patch(updateBlog)
+router.route('/liked').get(getMostLikedBlogs)
+router.route('/:id').get(getBlog).put(updateBlog)
 
 module.exports = router
